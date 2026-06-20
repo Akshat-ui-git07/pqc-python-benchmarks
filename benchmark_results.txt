@@ -1,0 +1,191 @@
+================================================================
+PQC PYTHON BENCHMARK RESULTS
+Comparative Benchmarking of NIST PQC Standards in Pure Python
+================================================================
+
+Hardware:  Intel 13th Gen Core (Family 6, Model 186) x86-64
+OS:        Windows 10 (Build 26200)
+Python:    3.14.3 (CPython, 64-bit)
+kyber-py:  1.2.0
+dilithium-py: 1.4.0
+SLH-DSA:   0.2.2
+
+Methodology:
+- ML-KEM:  500 trials, run twice, first run discarded (Python warmup effect)
+- ML-DSA:  1000 trials per operation
+- SLH-DSA 128f/192f: 100 trials
+- SLH-DSA 256f: 25 trials (memory constraint on test hardware)
+- All results reported as medians (robust to outliers)
+- CV = Coefficient of Variation (stdev/mean x 100%)
+- p95/p99 = 95th and 99th percentile latencies
+
+================================================================
+ML-KEM (FIPS 203) — 500 trials — Post-warmup stable run
+================================================================
+
+ML-KEM-512
+  KeyGen:  median=1.37ms  cv=19.3%  p95=2.28ms  p99=3.04ms
+  Encaps:  median=1.99ms  cv=18.6%  p95=3.03ms  p99=3.59ms
+  Decaps:  median=2.84ms  cv=16.0%  p95=4.02ms  p99=4.96ms
+  Public key size:  800 bytes
+  Ciphertext size:  768 bytes
+
+ML-KEM-768
+  KeyGen:  median=2.38ms  cv=16.4%  p95=3.51ms  p99=4.11ms
+  Encaps:  median=3.18ms  cv=14.2%  p95=4.32ms  p99=5.09ms
+  Decaps:  median=4.40ms  cv=40.3%  p95=5.59ms  p99=6.29ms  [note: single outlier spike]
+  Public key size:  1184 bytes
+  Ciphertext size:  1088 bytes
+
+ML-KEM-1024
+  KeyGen:  median=3.63ms  cv=12.6%  p95=4.87ms  p99=5.21ms
+  Encaps:  median=4.58ms  cv=12.4%  p95=5.94ms  p99=6.78ms
+  Decaps:  median=6.18ms  cv=10.7%  p95=7.64ms  p99=8.54ms
+  Public key size:  1568 bytes
+  Ciphertext size:  1568 bytes
+
+================================================================
+ML-DSA (FIPS 204) — 1000 trials
+================================================================
+
+ML-DSA-44
+  KeyGen:  median=4.91ms   cv=45.9%  p95=9.32ms   p99=15.25ms
+  Sign:    median=46.24ms  cv=74.6%  p95=151.53ms  p99=242.47ms
+  Verify:  median=6.07ms   cv=33.5%  p95=11.07ms  p99=16.12ms
+  Public key size:   1312 bytes
+  Signature size:    2420 bytes
+
+ML-DSA-65
+  KeyGen:  median=8.21ms   cv=22.1%  p95=13.02ms  p99=15.03ms
+  Sign:    median=69.66ms  cv=72.4%  p95=224.73ms  p99=311.16ms
+  Verify:  median=9.41ms   cv=21.3%  p95=14.61ms  p99=16.09ms
+  Public key size:   1952 bytes
+  Signature size:    3309 bytes
+
+ML-DSA-87
+  KeyGen:  median=16.01ms  cv=32.3%  p95=25.53ms  p99=34.25ms
+  Sign:    median=88.68ms  cv=60.9%  p95=248.24ms  p99=344.70ms
+  Verify:  median=18.05ms  cv=28.6%  p95=28.78ms  p99=35.87ms
+  Public key size:   2592 bytes
+  Signature size:    4627 bytes
+
+================================================================
+SLH-DSA (FIPS 205) — SHAKE fast f-variants
+================================================================
+
+SLH-DSA-128f (100 trials)
+  KeyGen:  median=17.69ms   cv=81.8%  p95=39.26ms   p99=182.32ms
+  Sign:    median=222.32ms  cv=33.9%  p95=412.92ms  p99=702.54ms
+  Verify:  median=13.41ms   cv=30.9%  p95=25.87ms   p99=32.96ms
+  Public key size:   32 bytes
+  Signature size:    17088 bytes
+
+SLH-DSA-192f (100 trials)
+  KeyGen:  median=26.65ms   cv=50.5%  p95=65.36ms   p99=139.72ms
+  Sign:    median=353.23ms  cv=30.9%  p95=608.87ms  p99=954.50ms
+  Verify:  median=19.03ms   cv=53.9%  p95=53.25ms   p99=92.93ms
+  Public key size:   48 bytes
+  Signature size:    35664 bytes
+
+SLH-DSA-256f (25 trials — memory constrained)
+  KeyGen:  median=84.87ms    cv=52.7%  p95=195.06ms   p99=289.90ms
+  Sign:    median=1031.71ms  cv=25.7%  p95=1608.42ms  p99=1618.56ms
+  Verify:  median=24.87ms    cv=47.5%  p95=54.42ms    p99=71.13ms
+  Public key size:   64 bytes
+  Signature size:    49856 bytes
+
+================================================================
+VARIANCE DECOMPOSITION EXPERIMENT
+================================================================
+
+Purpose: Distinguish algorithmic variance (from rejection sampling)
+from environmental variance (Python interpreter/OS/thermal).
+
+Method: Ran ML-DSA benchmark under two conditions:
+  Condition A — background applications open (browser, Steam, etc.)
+  Condition B — all background applications closed
+
+Results (1000 trials each condition):
+
+ML-DSA-44
+  KeyGen CV:  Condition A=45.9%  Condition B=17.1%  [dropped 28pp — environmental]
+  Sign CV:    Condition A=74.6%  Condition B=72.2%  [stable — algorithmic]
+  Verify CV:  Condition A=33.5%  Condition B=16.1%  [dropped — environmental]
+
+ML-DSA-65
+  KeyGen CV:  Condition A=22.1%  Condition B=16.6%  [dropped — environmental]
+  Sign CV:    Condition A=72.4%  Condition B=64.7%  [stable — algorithmic]
+  Verify CV:  Condition A=21.3%  Condition B=9.9%   [dropped — environmental]
+
+ML-DSA-87
+  KeyGen CV:  Condition A=32.3%  Condition B=7.6%   [dropped 24pp — environmental]
+  Sign CV:    Condition A=60.9%  Condition B=64.8%  [stable — algorithmic]
+  Verify CV:  Condition A=28.6%  Condition B=10.1%  [dropped — environmental]
+
+Key finding: ML-DSA SIGNING CV is unaffected by environmental controls
+(74% open vs 72% closed). ML-DSA KEYGEN/VERIFY CV drops dramatically
+when background processes are closed (45% to 17% for ML-DSA-44 KeyGen).
+This proves signing variance is ALGORITHMIC (rejection sampling) while
+KeyGen/Verify variance is ENVIRONMENTAL (Python interpreter overhead).
+
+================================================================
+PYTHON WARMUP EFFECT EXPERIMENT
+================================================================
+
+Purpose: Document Python adaptive interpreter warmup effect on
+ML-KEM benchmark stability.
+
+Method: Ran ML-KEM-512 KeyGen benchmark immediately after cold
+PyCharm startup (Run 1) vs second consecutive run (Run 2).
+
+ML-KEM-512 KeyGen CV:
+  Run 1 (cold): CV=48.0%  max=13.96ms
+  Run 2 (warm): CV=25.1%  max=5.84ms
+
+Observation: First run shows significantly elevated CV and extreme
+outliers. Second run stabilizes. Effect is consistent across sessions
+and independent of background application load, indicating Python
+adaptive interpreter warmup as the primary cause.
+
+Implication: Pure Python PQC benchmarks require warmup run before
+stable measurements can be obtained. This effect is absent in
+C implementations where CV for deterministic operations is <1.5%.
+
+================================================================
+PYTHON vs C PERFORMANCE GAP
+================================================================
+
+ML-KEM-512 KeyGen comparison:
+  This study (pure Python kyber-py):     1.37ms median
+  Yousefi 2024 (PyCryptodome C-ext):     0.0095ms
+  Original CRYSTALS-Kyber spec (AVX2 C): 0.007ms
+
+Pure Python is approximately 145x slower than PyCryptodome
+and approximately 196x slower than AVX2-optimized C.
+
+Similar gaps observed across all three algorithm families.
+No prior study has systematically quantified this gap across
+all nine NIST PQC variants in pure Python.
+
+================================================================
+REFERENCE COMPARISON (C implementations from literature)
+================================================================
+
+Chhetri 2026 (ARM Cortex-M0+, PQClean reference C):
+  ML-DSA-44 Sign: mean=158.9ms  CV=67.5%  p99=489.9ms
+  ML-DSA-65 Sign: mean=256.6ms  CV=73.1%  p99=953.6ms
+  ML-DSA-87 Sign: mean=355.2ms  CV=65.6%  p99=1125ms
+  ML-KEM-512 KeyGen: CV<1.5% (deterministic on bare metal)
+
+Demir et al. 2025 (x86, AVX2-optimized C):
+  Kyber-512 KeyGen: 0.007ms
+  Dilithium-2 Sign: 0.077ms
+
+This study (x86, pure Python):
+  ML-KEM-512 KeyGen: 1.37ms  (196x slower than AVX2)
+  ML-DSA-44 Sign:    46.24ms (600x slower than AVX2)
+  ML-DSA-44 KeyGen CV: 17-46% (vs <1.5% on bare metal C)
+
+================================================================
+END OF RESULTS
+================================================================
