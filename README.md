@@ -52,3 +52,13 @@ pip install kyber-py dilithium-py SLH-DSA
 Op1 = Encaps (ML-KEM) / Sign (ML-DSA, SLH-DSA)
 Op2 = Decaps (ML-KEM) / Verify (ML-DSA, SLH-DSA)
 CV = Coefficient of Variation (lower = more consistent)
+
+
+## Key Observation
+
+ML-DSA signing CV stays between 60-75% whether background apps 
+are open or closed. ML-KEM KeyGen CV drops from ~45% to ~17% 
+when background processes are closed. This shows two completely 
+different types of variance — one from rejection sampling inside 
+the algorithm, one from the Python environment. C implementations 
+show under 1.5% CV for the same deterministic operations.
