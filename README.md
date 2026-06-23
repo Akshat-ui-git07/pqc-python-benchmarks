@@ -32,3 +32,23 @@ Intel 13th Gen x86 — Windows 10 — Python 3.14.3
 
 ## Installation
 pip install kyber-py dilithium-py SLH-DSA
+
+
+
+## Benchmark Results Summary (Medians, Post-Warmup)
+
+| Algorithm | KeyGen | Op1 | Op2 | CV (Op1) |
+
+| ML-KEM-512 | 1.37ms | 2.02ms | 2.84ms | 18.6% |
+| ML-KEM-768 | 2.38ms | 3.18ms | 4.40ms | 14.2% |
+| ML-KEM-1024 | 3.63ms | 4.58ms | 6.18ms | 12.4% |
+| ML-DSA-44 | 4.91ms | 46.24ms | 6.07ms | 74.6% |
+| ML-DSA-65 | 8.21ms | 69.66ms | 9.41ms | 72.4% |
+| ML-DSA-87 | 16.01ms | 88.68ms | 18.05ms | 60.9% |
+| SLH-DSA-128f | 17.69ms | 222.32ms | 13.41ms | 33.9% |
+| SLH-DSA-192f | 26.65ms | 353.23ms | 19.03ms | 30.9% |
+| SLH-DSA-256f | 84.87ms | 1031.71ms | 24.87ms | 25.7% |
+
+Op1 = Encaps (ML-KEM) / Sign (ML-DSA, SLH-DSA)
+Op2 = Decaps (ML-KEM) / Verify (ML-DSA, SLH-DSA)
+CV = Coefficient of Variation (lower = more consistent)
