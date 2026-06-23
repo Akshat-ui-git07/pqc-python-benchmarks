@@ -37,8 +37,8 @@ pip install kyber-py dilithium-py SLH-DSA
 
 ## Benchmark Results Summary (Medians, Post-Warmup)
 
-| Algorithm | KeyGen | Op1 | Op2 | CV (Op1) |
-
+| Algorithm | KeyGen | Op1 | Op2 | CV Op1 |
+|---|---|---|---|---|
 | ML-KEM-512 | 1.37ms | 2.02ms | 2.84ms | 18.6% |
 | ML-KEM-768 | 2.38ms | 3.18ms | 4.40ms | 14.2% |
 | ML-KEM-1024 | 3.63ms | 4.58ms | 6.18ms | 12.4% |
@@ -48,6 +48,10 @@ pip install kyber-py dilithium-py SLH-DSA
 | SLH-DSA-128f | 17.69ms | 222.32ms | 13.41ms | 33.9% |
 | SLH-DSA-192f | 26.65ms | 353.23ms | 19.03ms | 30.9% |
 | SLH-DSA-256f | 84.87ms | 1031.71ms | 24.87ms | 25.7% |
+
+Op1 = Encaps for ML-KEM / Sign for ML-DSA and SLH-DSA
+Op2 = Decaps for ML-KEM / Verify for ML-DSA and SLH-DSA
+CV = Coefficient of Variation — lower means more consistent timing
 
 Op1 = Encaps (ML-KEM) / Sign (ML-DSA, SLH-DSA)
 Op2 = Decaps (ML-KEM) / Verify (ML-DSA, SLH-DSA)
