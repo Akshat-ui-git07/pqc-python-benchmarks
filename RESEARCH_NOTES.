@@ -1,0 +1,15 @@
+# Research Notes
+
+I started this project knowing nothing about post-quantum cryptography. 
+The first thing that surprised me was how different the three algorithms 
+feel when you actually run them. Kyber is fast. Dilithium is unpredictable. 
+SLH-DSA is painfully slow but has the tiniest public keys.
+
+The variance finding came by accident. I noticed my ML-KEM numbers 
+kept changing between runs but my ML-DSA signing numbers stayed 
+consistently high no matter what I did. That is when I realized they 
+are different kinds of variance entirely.
+
+I am 16 years old and taught myself Python and cryptography to do this 
+research. All benchmark code is written by me. The research took about 
+3 months from zero knowledge to this dataset.
